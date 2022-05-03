@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<odoo>
+
+    <template id="report_picking" inherit_id="stock.report_picking">
+        <div t-field="o.move_ids_without_package[0].partner_id" position="after">
+            <p t-if="o.is_dropshipping() and o.move_ids_without_package[0].sudo().partner_id.vat">
+                <t t-esc="o.company_id.country_id.vat_label or 'Tax ID'"/>: <span t-field="o.move_ids_without_package[0].sudo().partner_id.vat"/>
+            </p>
+        </div>
+        <div name="div_incoming_address" position="attributes">
+            <attribute name="t-if">not o.is_dropshipping()</attribute>
+        </div>
+        <div name="div_incoming_address" position="after">
+            <div t-if="o.is_dropshipping() and o.carrier_id.partner_id" name="div_carrier_address" class="col-5 offset-1">
+                <span><strong>Transporte:</strong></span>
+                <div t-field="o.carrier_id.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+            </div>
+        </div>
+        <p t-field="o.note" position="after">
+            <p t-if="o.declared_value">Valor declarado: <span t-field="o.declared_value" t-options="{'widget': 'monetary', 'display_currency': o.company_id.currency_id}"/></p>
+        </p>
+    </template>
+
+</odoo>
+
+<!-- vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4-->
